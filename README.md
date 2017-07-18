@@ -1,6 +1,6 @@
 # FxCalculator
 
-Someone asked me to solve a programming challenge to gauge my skills, the problem was complex enough for me to use for scratch off my itch to get hands on Angular 2.
+Someone asked me to solve a programming challenge to gauge my skills, the problem was complex enough for me to use to scratch off my itch to get hands-on on Angular 2.
 It's basically a simple currency to currency calculator. 
 
 src/main/resources/rate_matrix.xlsx defines two tabs direct_rates and rate_matrix.
