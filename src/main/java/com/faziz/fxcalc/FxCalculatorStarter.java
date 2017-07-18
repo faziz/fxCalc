@@ -1,12 +1,12 @@
-package com.faziz.fxcalculator;
+package com.faziz.fxcalc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FxCalculator {
+public class FxCalculatorStarter {
 
     public static void main(String[] args) {
-        SpringApplication.run(FxCalculator.class, args);
+        SpringApplication.run(FxCalculatorStarter.class, args);
     }
 }

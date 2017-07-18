@@ -1,0 +1,16 @@
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th style="text-align: center" *ngFor="let rate of rateMatrix"> {{ rate.currency }} </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let rate of rateMatrix">
+                <th style="text-align: center"> {{ rate.currency }} </th>
+                <td style="text-align: center" *ngFor="let r of rate.currencyRates"> {{ r.rate }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,4 +1,4 @@
-package com.faziz.fxcalculator;
+package com.faziz.fxcalc;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

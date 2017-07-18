@@ -1,0 +1,20 @@
+<form [formGroup]="conversionForm" (ngSubmit)="onSubmit()">
+    <table>
+        <tr>
+            <td><input type="text" formControlName="amount"></td>
+            <td>
+                <select formControlName="ccy1" class="selectpicker btn-primary">
+                    <option *ngFor="let currency of currencies" [ngValue]="currency">{{ currency }}</option>
+                </select>
+            </td>
+            <td><-></td>
+            <td>
+                <select formControlName="ccy2" class="selectpicker btn-primary">
+                    <option *ngFor="let currency of currencies" [ngValue]="currency">{{ currency }}</option>
+                </select>
+            </td>
+            <td><button id="convert" class="btn btn-primary">-></button></td>
+            <td><div id="result" ></div>{{result.covertedAmount | number:'.2-2'}}</td>
+        </tr>
+    </table>
+</form>

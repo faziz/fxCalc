@@ -1,0 +1,16 @@
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="text-align: left">Fx Direct Rate</th>
+                <th style="text-align: right">Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let drate of directRates">
+                <td style="text-align: left"> {{ drate.currencyMapping }}</td>
+                <td style="text-align: right">{{ drate.rate | number:'2.2-2'}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
