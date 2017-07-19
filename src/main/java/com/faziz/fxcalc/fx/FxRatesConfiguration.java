@@ -3,9 +3,6 @@ package com.faziz.fxcalc.fx;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -15,6 +12,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class FxRatesConfiguration {
     
     /** Sheet name containing the rate matrix. */
-    private final String CURRENCY_RATES = "/rate_matrix.xlsx";
+    private final String CURRENCY_RATES = "classpath:rate_matrix.xlsx";
     /** Sheet name containing direct rates for currency pair. */
     private final String DIRECT_RATES_SHEET = "direct_rates";
     /** Declares how the conversion between two currencies is to take place. */
@@ -36,9 +34,12 @@ public class FxRatesConfiguration {
     /** Provides inter-currency exchange rate calculation method. */
     private Map<String, Map<String, String>> ratesMatrix = new HashMap<>();
     
+    @Value(CURRENCY_RATES)
+    private org.springframework.core.io.Resource resource;
+    
     @PostConstruct
     public void initialize() {
-        Workbook wb = loadRatesFile(CURRENCY_RATES);
+        Workbook wb = loadRatesFile();
         assert null != wb;
         
         loadDirectRates(wb);
@@ -57,18 +58,16 @@ public class FxRatesConfiguration {
     
     /**
      * Load Excel file containing the direct rates and rates matrix.
-     * @param filename
      * @return 
      * @throws RuntimeException if the file is not found or if file was not MS-Excel.
      */
-    private Workbook loadRatesFile(String filename) throws RuntimeException {
+    private Workbook loadRatesFile() throws RuntimeException {
         
-        try (InputStream stream = Files.newInputStream(
-                Paths.get(this.getClass().getResource(filename).toURI()))) {
+        try (InputStream stream = resource.getInputStream()) {
             
             return WorkbookFactory.create(stream);
             
-        } catch (IOException | InvalidFormatException | URISyntaxException ex) {
+        } catch (IOException | InvalidFormatException ex) {
             throw new RuntimeException(ex);
         }
     }
