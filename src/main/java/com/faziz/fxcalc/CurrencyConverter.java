@@ -25,18 +25,16 @@ public class CurrencyConverter {
 
         //Make sure the required parameters are passed.
         validateArguments();
-        Graph graph = GraphBuilder.build(fileReader(REF_ARGUMENT));
         CurrencyConverter converter = new CurrencyConverter();
 
         try (BufferedWriter writer = fileWriter("output.csv")) {
             //Write header.
-            writer.write("FromCurrency,ToCurrency,FromAmount,ToAmount");
-            writer.newLine();
+            converter.write(writer, "FromCurrency,ToCurrency,FromAmount,ToAmount");
 
             //Write the conversion result.
             new CurrencyConversionInputReader().read(fileReader(DATA_ARGUMENT)).
                 stream().forEach(i -> {
-                    converter.convertAndWrite(graph, i, writer);
+                    converter.convertAndWrite(i, writer);
                 });
         }
     }
@@ -60,15 +58,25 @@ public class CurrencyConverter {
         }
     }
     
-    private void convertAndWrite(Graph graph, ConversionInput input, BufferedWriter writer) {
-        Vertex v1 = new Vertex(input.getBaseCurrency());
-        Vertex v2 = new Vertex(input.getTargetCurrency());
-        Double rate = graph.getRate(v1, v2);
-        
-        String line = null != rate ? 
-                getLineWithConvertedCurrencyAmount(v1, v2, input, rate) : 
-                getLineWithWarningMessage(v1, v2, input);
-        write(writer, line);
+    private void convertAndWrite(ConversionInput input, BufferedWriter writer) 
+        throws IllegalStateException {
+
+        try {
+            Vertex baseCurrency   = new Vertex(input.getBaseCurrency());
+            Vertex targetCurrency = new Vertex(input.getTargetCurrency());
+
+            Graph graph = GraphBuilder.build(fileReader(REF_ARGUMENT));
+            Double rate = graph.getRate(baseCurrency, targetCurrency);
+
+            String line = null != rate ?
+                    getLineWithConvertedCurrencyAmount(baseCurrency, targetCurrency, input, rate) :
+                    getLineWithWarningMessage(baseCurrency, targetCurrency, input);
+            write(writer, line);
+        } catch (IllegalStateException ex) {
+            throw ex;
+        } catch (IOException | IllegalArgumentException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     private void write(BufferedWriter writer, String string) 
@@ -81,14 +89,16 @@ public class CurrencyConverter {
         }
     }
 
-    private String getLineWithConvertedCurrencyAmount(Vertex v1, Vertex v2, ConversionInput input, Double rate) {
+    private String getLineWithConvertedCurrencyAmount(Vertex baseCurrency, 
+            Vertex targetCurrency, ConversionInput input, Double rate) {
         BigDecimal convertedCurrency = BigDecimal.valueOf(rate).multiply(input.getFromAmount());
-        return format("%s,%s,%s,%.3f", v1.getCurrency(), v2.getCurrency(), 
+        return format("%s,%s,%s,%.3f", baseCurrency.getCurrency(), targetCurrency.getCurrency(), 
             input.getFromAmount(), convertedCurrency.doubleValue());
     }
 
-    private String getLineWithWarningMessage(Vertex v1, Vertex v2, ConversionInput input) {
-        return format("%s,%s,%s,%s", v1.getCurrency(), v2.getCurrency(), 
+    private String getLineWithWarningMessage(Vertex baseCurrency, 
+            Vertex targetCurrency, ConversionInput input) {
+        return format("%s,%s,%s,%s", baseCurrency.getCurrency(), targetCurrency.getCurrency(), 
             input.getFromAmount(), "Conversion rate missing, conversion not possible.");
     }
 }
