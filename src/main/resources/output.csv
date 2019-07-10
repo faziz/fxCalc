@@ -1,0 +1,7 @@
+FromCurrency,ToCurrency,FromAmount,ToAmount
+USD,JPY,10.0,1100.000
+CHF,EUR,10.0,8.989
+CHF,INR,20.0,Conversion rate missing, conversion not possible.
+INR,SGD,1000.0,20.000
+SGD,JPY,100.0,Conversion rate missing, conversion not possible.
+RMB,EUR,10000.0,1335.000
