@@ -4,11 +4,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
+import org.junit.Before;
 
 public class GraphTest {
 
-    private static final Graph graph = new Graph();
+    private Graph graph;
     private static final Vertex SGD = new Vertex("SGD");
     private static final Vertex EUR = new Vertex("EUR");
     private static final Vertex CHF = new Vertex("CHF");
@@ -17,8 +17,9 @@ public class GraphTest {
     private static final Vertex RMB = new Vertex("RMB");
     private static final Vertex INR = new Vertex("INR");
 
-    @BeforeClass
-    public static void before() {
+    @Before
+    public void before() {
+        graph = new Graph();
         graph.addVertex(SGD);
         graph.addVertex(EUR);
         graph.addVertex(CHF);

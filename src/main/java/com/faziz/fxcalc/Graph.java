@@ -1,14 +1,15 @@
 package com.faziz.fxcalc;
 
-import static java.lang.String.format;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 public class Graph {
 
     private final Map<Vertex, LinkedList<FxRate>> adjacentVerticesList = new HashMap<>();
-    private final Map<String, Double> ratesCache = new HashMap<>();
+    private final Set<Vertex> visited = new HashSet<>();
 
     public Vertex addVertex(Vertex vertex) {
         this.adjacentVerticesList.put(vertex, new LinkedList<>());
@@ -26,18 +27,20 @@ public class Graph {
     public Double getRate(Vertex v1, Vertex v2)
             throws IllegalArgumentException {
 
-        String key = calculateKey(v1, v2);
-        if (ratesCache.containsKey(key)) {
-            return ratesCache.get(key);
-        }
-
         checkArugment(adjacentVerticesList.containsKey(v1), "Base currency doesn't exist.");
         LinkedList<FxRate> adjList = adjacentVerticesList.get(v1);
+
+        //Handle cyclical dependencies.
+        if (visited.contains(v1)) {
+            //Already visited. Returning 1 means there wont be any change to the result when multiplied.
+            return 1.00;
+        }
 
         Double rate = null;
         for (FxRate edge : adjList) {
             if (edge.getTargetCurrency().equals(v2)) {
                 if (edge.getRate().isPresent()) {
+                    visited.add(v1);
                     return edge.getRate().get();
                 } else {
                     Vertex crossRateCurrency = edge.getCrossRateCurrency().get();
@@ -49,8 +52,6 @@ public class Graph {
                 }
             }
         }
-
-        ratesCache.putIfAbsent(key, rate);
         return rate;
     }
 
@@ -68,9 +69,5 @@ public class Graph {
         if (!condition) {
             throw new IllegalArgumentException(message);
         }
-    }
-
-    private String calculateKey(Vertex v1, Vertex v2) {
-        return format("%s-%s", v1.getCurrency(), v2.getCurrency());
     }
 }

@@ -10,7 +10,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -94,8 +94,8 @@ public class GraphBuilderTest {
         return fxRatesData;
     }
     
-    @BeforeClass
-    public static void setUpClass() throws FileNotFoundException, IOException {
+    @Before
+    public void setUp() throws FileNotFoundException, IOException {
         reader = new InputStreamReader(GraphBuilderTest.class.getResourceAsStream("/ref.csv"));
         graph = GraphBuilder.build(reader);
     }

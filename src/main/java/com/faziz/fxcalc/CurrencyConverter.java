@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.Properties;
 
 public class CurrencyConverter {
-    
+
     public static final String REF_ARGUMENT = "ref";
     public static final String DATA_ARGUMENT = "data";
 
@@ -20,7 +20,7 @@ public class CurrencyConverter {
      * @throws IllegalArgumentException
      * @throws java.io.IOException
      */
-    public static void main(String[] args) 
+    public static void main(String[] args)
             throws IllegalArgumentException, IOException {
 
         //Make sure the required parameters are passed.
@@ -33,9 +33,9 @@ public class CurrencyConverter {
 
             //Write the conversion result.
             new CurrencyConversionInputReader().read(fileReader(DATA_ARGUMENT)).
-                stream().forEach(i -> {
-                    converter.convertAndWrite(i, writer);
-                });
+                    stream().forEach(i -> {
+                        converter.convertAndWrite(i, writer);
+                    });
         }
     }
 
@@ -46,7 +46,7 @@ public class CurrencyConverter {
     private static FileReader fileReader(String fileName) throws FileNotFoundException {
         return new FileReader(getProperty(fileName));
     }
-    
+
     private static void validateArguments() throws IllegalArgumentException {
 
         Properties properties = System.getProperties();
@@ -57,20 +57,20 @@ public class CurrencyConverter {
             throw new IllegalArgumentException("Please provide currency data using the paramter \'data\'");
         }
     }
-    
-    private void convertAndWrite(ConversionInput input, BufferedWriter writer) 
-        throws IllegalStateException {
+
+    private void convertAndWrite(ConversionInput input, BufferedWriter writer)
+            throws IllegalStateException {
 
         try {
-            Vertex baseCurrency   = new Vertex(input.getBaseCurrency());
+            Vertex   baseCurrency = new Vertex(input.getBaseCurrency());
             Vertex targetCurrency = new Vertex(input.getTargetCurrency());
 
             Graph graph = GraphBuilder.build(fileReader(REF_ARGUMENT));
             Double rate = graph.getRate(baseCurrency, targetCurrency);
 
-            String line = null != rate ?
-                    getLineWithConvertedCurrencyAmount(baseCurrency, targetCurrency, input, rate) :
-                    getLineWithWarningMessage(baseCurrency, targetCurrency, input);
+            String line = null != rate
+                    ? getLineWithConvertedCurrencyAmount(baseCurrency, targetCurrency, input, rate)
+                    : getLineWithWarningMessage(baseCurrency, targetCurrency, input);
             write(writer, line);
         } catch (IllegalStateException ex) {
             throw ex;
@@ -79,26 +79,26 @@ public class CurrencyConverter {
         }
     }
 
-    private void write(BufferedWriter writer, String string) 
+    private void write(BufferedWriter writer, String line)
             throws IllegalStateException {
         try {
-            writer.write(string);
+            writer.write(line);
             writer.newLine();
         } catch (IOException ex) {
             throw new IllegalStateException(ex);
         }
     }
 
-    private String getLineWithConvertedCurrencyAmount(Vertex baseCurrency, 
+    private String getLineWithConvertedCurrencyAmount(Vertex baseCurrency,
             Vertex targetCurrency, ConversionInput input, Double rate) {
         BigDecimal convertedCurrency = BigDecimal.valueOf(rate).multiply(input.getFromAmount());
-        return format("%s,%s,%s,%.3f", baseCurrency.getCurrency(), targetCurrency.getCurrency(), 
-            input.getFromAmount(), convertedCurrency.doubleValue());
+        return format("%s,%s,%s,%.3f", baseCurrency.getCurrency(), targetCurrency.getCurrency(),
+                input.getFromAmount(), convertedCurrency.doubleValue());
     }
 
-    private String getLineWithWarningMessage(Vertex baseCurrency, 
+    private String getLineWithWarningMessage(Vertex baseCurrency,
             Vertex targetCurrency, ConversionInput input) {
-        return format("%s,%s,%s,%s", baseCurrency.getCurrency(), targetCurrency.getCurrency(), 
-            input.getFromAmount(), "Conversion rate missing, conversion not possible.");
+        return format("%s,%s,%s,%s", baseCurrency.getCurrency(), targetCurrency.getCurrency(),
+                input.getFromAmount(), "Conversion rate missing, conversion not possible.");
     }
 }
