@@ -33,9 +33,9 @@ public class CurrencyConverter {
 
             //Write the conversion result.
             new CurrencyConversionInputReader().read(fileReader(DATA_ARGUMENT)).
-                    stream().forEach(i -> {
-                        converter.convertAndWrite(i, writer);
-                    });
+                forEach(i -> {
+                    converter.convertAndWrite(i, writer);
+                });
         }
     }
 

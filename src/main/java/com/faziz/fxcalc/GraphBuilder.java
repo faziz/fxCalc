@@ -41,16 +41,20 @@ public class GraphBuilder {
 
             //Load Graph with adjacency list.
             csvData.entrySet().forEach(e -> {
-                Vertex vertex = e.getKey();
+                Vertex baseCurrency = e.getKey();
                 List<String> data = e.getValue();
 
                 for (int i = 0; i < data.size(); i++) {
                     String d = data.get(i);
+                    Vertex targetCurrency = vertices.get(headers.get(i));
+
                     if (isNumber(d)) {
-                        graph.addEdge(vertex, vertices.get(headers.get(i)), valueOf(d));
+                        Double fxRate = valueOf(d);
+                        graph.addEdge(baseCurrency, targetCurrency, fxRate);
                     } else {
                         if (vertices.containsKey(d)) {
-                            graph.addEdge(vertex, vertices.get(headers.get(i)), vertices.get(d));
+                            Vertex crossRateCurrency = vertices.get(d);
+                            graph.addEdge(baseCurrency, targetCurrency, crossRateCurrency);
                         }
                     }
                 }

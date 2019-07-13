@@ -16,37 +16,35 @@ public class Graph {
         return vertex;
     }
 
-    public void addEdge(Vertex v1, Vertex v2, Double fxRate) {
-        adjacentVerticesList.get(v1).addFirst(new FxRate(v1, v2, fxRate));
+    public void addEdge(Vertex baseCurrency, Vertex targetCurrency, Double fxRate) {
+        adjacentVerticesList.get(baseCurrency).addFirst(new FxRate(baseCurrency, targetCurrency, fxRate));
     }
 
-    public void addEdge(Vertex v1, Vertex v2, Vertex crossRateCurrency) {
-        adjacentVerticesList.get(v1).addFirst(new FxRate(v1, v2, crossRateCurrency));
+    public void addEdge(Vertex baseCurrency, Vertex targetCurrency, Vertex crossRateCurrency) {
+        adjacentVerticesList.get(baseCurrency).addFirst(new FxRate(baseCurrency, targetCurrency, crossRateCurrency));
     }
 
-    public Double getRate(Vertex v1, Vertex v2)
+    public Double getRate(Vertex baseCurrency, Vertex targetCurrency)
             throws IllegalArgumentException {
 
-        checkArugment(adjacentVerticesList.containsKey(v1), "Base currency doesn't exist.");
-        LinkedList<FxRate> adjList = adjacentVerticesList.get(v1);
-
+        checkArugment(adjacentVerticesList.containsKey(baseCurrency), "Base currency doesn't exist.");
         //Handle cyclical dependencies.
-        if (visited.contains(v1)) {
+        if (visited.contains(baseCurrency)) {
             //Already visited. Returning 1 means there wont be any change to the result when multiplied.
             return 1.00;
         }
 
         Double rate = null;
-        for (FxRate edge : adjList) {
-            if (edge.getTargetCurrency().equals(v2)) {
+        for (FxRate edge : adjacentVerticesList.get(baseCurrency)) {
+            if (edge.getTargetCurrency().equals(targetCurrency)) {
                 if (edge.getRate().isPresent()) {
-                    visited.add(v1);
+                    visited.add(baseCurrency);
                     return edge.getRate().get();
                 } else {
                     Vertex crossRateCurrency = edge.getCrossRateCurrency().get();
-                    if (!v2.equals(crossRateCurrency)) {
-                        Double fxRate1 = getRate(v1, crossRateCurrency);
-                        Double fxRate2 = getRate(crossRateCurrency, v2);
+                    if (!targetCurrency.equals(crossRateCurrency)) {
+                        Double fxRate1 = getRate(baseCurrency, crossRateCurrency);
+                        Double fxRate2 = getRate(crossRateCurrency, targetCurrency);
                         rate = ratesFound(fxRate1, fxRate2) ? fxRate1 * fxRate2 : null;
                     }
                 }
