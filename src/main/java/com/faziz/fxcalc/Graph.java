@@ -30,8 +30,8 @@ public class Graph {
         checkArugment(adjacentVerticesList.containsKey(baseCurrency), "Base currency doesn't exist.");
         //Handle cyclical dependencies.
         if (visited.contains(baseCurrency)) {
-            //Already visited. Returning 1 means there wont be any change to the result when multiplied.
-            return 1.00;
+            //Already visited. Handling circular dependency.
+            return null;
         }
 
         Double rate = null;

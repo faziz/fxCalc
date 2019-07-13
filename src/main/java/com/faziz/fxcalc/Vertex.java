@@ -7,7 +7,7 @@ public class Vertex {
     private final String currency;
 
     public Vertex(String currency) {
-        this.currency = currency;
+        this.currency = currency.toUpperCase();
     }
     
     public String getCurrency() {
@@ -33,10 +33,7 @@ public class Vertex {
             return false;
         }
         final Vertex other = (Vertex) obj;
-        if (!Objects.equals(this.currency, other.currency)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.currency, other.currency);
     }
 
     @Override
